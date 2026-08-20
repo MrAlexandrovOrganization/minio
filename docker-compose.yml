@@ -1,0 +1,48 @@
+# Standalone MinIO object storage service.
+# Run independently: docker compose up -d
+#
+# Other projects connect by joining the external network "minio-net":
+#
+#   networks:
+#     minio-net:
+#       external: true
+#
+# Then set MINIO_ENDPOINT=minio:9000.
+# The API port is NOT published to the host — only containers in minio-net can reach it.
+# The console (port 9001) is published to localhost only for management.
+
+networks:
+  minio-net:
+    name: minio-net
+
+services:
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ACCESS_KEY}"
+      MINIO_ROOT_PASSWORD: "${MINIO_SECRET_KEY}"
+    volumes:
+      - minio-data:/data
+    ports:
+      - "127.0.0.1:9001:9001"  # console, only localhost — not accessible from host IP
+    networks:
+      minio-net:
+        aliases:
+          - minio
+    # No "ports:" for API (9000) — only accessible via minio-net.
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  minio-data:
