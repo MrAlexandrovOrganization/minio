@@ -1,4 +1,4 @@
-# infra__minio
+# minio
 
 ## Структура Compose
 
