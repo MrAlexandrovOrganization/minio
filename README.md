@@ -20,3 +20,14 @@ rollback. Transfer the full cold volume, including .minio.sys, and verify every
 file hash before activation. The private off-VM archive is alongside the Stash
 PostgreSQL backup under ~/.local/state/server-migration-20261020 on the Mac.
 Version pin: makefiles/versions.mk; make versions displays it.
+
+## Verified storage placement, 21 October 2026
+
+The Stash bucket and .minio.sys were copied cold to WSL's minio_minio-data.
+All 1,447 source files matched by name/content digest before first start; existing
+Stash downloads and a synthetic upload/read/delete passed afterward.
+The old registry reference cannot currently be pulled anonymously; the exact
+existing image was exported/imported, not replaced. Keep storage-images.tar.gz
+with the private data backups on the administrative Mac and WSL.
+Source MinIO is stopped with restart=no and protected by .retired. CI uses the
+restricted Russia-to-WSL receiver and never rebuilds MinIO.
