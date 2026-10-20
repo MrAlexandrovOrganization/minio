@@ -1,3 +1,8 @@
+ifneq ($(wildcard .retired),)
+ifneq ($(filter up restart,$(MAKECMDGOALS)),)
+$(error This source MinIO is retired; restore the latest data before reactivation)
+endif
+endif
 DOCKER_COMPOSE_BASE = docker compose --project-directory "$(CURDIR)"
 include makefiles/compose.mk
 include makefiles/versions.mk
@@ -5,7 +10,7 @@ DOCKER_COMPOSE = docker compose --project-directory "$(CURDIR)" $(COMPOSE_FLAGS)
 
 .PHONY: up
 up:
-	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_COMPOSE) up -d --wait --wait-timeout 120
 
 .PHONY: down
 down:
@@ -28,3 +33,8 @@ check: compose-layout-check
 
 versions:
 	@$(foreach v,$(VERSION_VARS),printf '%s=%s\n' '$(v)' '$($(v))';)
+
+.PHONY: compose
+ARGS ?= ps
+compose:
+	$(DOCKER_COMPOSE) $(ARGS)
