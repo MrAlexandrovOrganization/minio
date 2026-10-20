@@ -22,7 +22,7 @@ def main():
         raise ValueError("dirty checkout")
     if subprocess.check_output(["git", "branch", "--show-current"], text=True).strip() != "main":
         raise ValueError("wrong branch")
-    subprocess.run(["git", "fetch", "--quiet", "deployment-source", "refs/heads/main"], check=True)
+    subprocess.run(["git", "fetch", "--quiet", "origin", "refs/heads/main"], check=True)
     if subprocess.check_output(["git", "rev-parse", "FETCH_HEAD"], text=True).strip() != release["revision"]:
         raise ValueError("stale release")
     subprocess.run(["git", "merge", "--quiet", "--ff-only", release["revision"]], check=True)

@@ -14,7 +14,7 @@
 
 ## Stash storage migration
 
-MinIO for Stash now runs on ASUS with the same named volume, credentials and
+MinIO for Stash now runs on WSL with the same named volume, credentials and
 release. The source remains stopped with restart=no; preserve its volume for
 rollback. Transfer the full cold volume, including .minio.sys, and verify every
 file hash before activation. The private off-VM archive is alongside the Stash
