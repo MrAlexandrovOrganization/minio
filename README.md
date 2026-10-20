@@ -31,3 +31,7 @@ existing image was exported/imported, not replaced. Keep storage-images.tar.gz
 with the private data backups on the administrative Mac and WSL.
 Source MinIO is stopped with restart=no and protected by .retired. CI uses the
 restricted Russia-to-WSL receiver and never rebuilds MinIO.
+
+The VM config check uses --env-file /dev/null and --no-interpolate. This Compose
+file has no service env_file entries, so --no-env-resolution is unnecessary and
+is omitted for compatibility with WSL's installed Compose plugin.

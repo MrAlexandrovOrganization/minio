@@ -27,7 +27,7 @@ restart:
 # Read-only validation of every tracked Compose combination, without runtime secrets.
 .PHONY: compose-layout-check
 compose-layout-check:
-	$(DOCKER_COMPOSE_BASE) --env-file /dev/null -f compose/docker-compose.yml --profile '*' config --no-interpolate --no-env-resolution --quiet
+	$(DOCKER_COMPOSE_BASE) --env-file /dev/null -f compose/docker-compose.yml --profile '*' config --no-interpolate --quiet
 
 check: compose-layout-check
 
