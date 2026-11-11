@@ -2,3 +2,5 @@
 
 .retired
 __pycache__/
+
+.observability/

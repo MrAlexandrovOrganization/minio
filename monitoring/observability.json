@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "service": "minio",
+  "components": [
+    "minio/*"
+  ],
+  "logs": [],
+  "assets": []
+}
