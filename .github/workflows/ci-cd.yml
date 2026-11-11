@@ -24,17 +24,19 @@ jobs:
       - uses: appleboy/ssh-action@v1.2.2
         env:
           DEPLOY_SHA: ${{ github.sha }}
+          MINIO_DEPLOY_TARGET: ${{ secrets.MINIO_DEPLOY_TARGET }}
+          MINIO_DEPLOY_KEY_PATH: ${{ secrets.MINIO_DEPLOY_KEY_PATH }}
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          envs: DEPLOY_SHA
+          envs: DEPLOY_SHA,MINIO_DEPLOY_TARGET,MINIO_DEPLOY_KEY_PATH
           command_timeout: 12m
           script: |
             set -eu
-            cd /home/maxim/projects/infra/minio
+            cd "$HOME/projects/infra/minio"
             test -z "$(git status --porcelain)"
             git fetch --quiet origin refs/heads/main
             test "$(git rev-parse FETCH_HEAD)" = "$DEPLOY_SHA"
             git merge --ff-only --quiet "$DEPLOY_SHA"
-            python3 -c 'import json,os; print(json.dumps({"revision":os.environ["DEPLOY_SHA"]}))' | ssh -T -o BatchMode=yes -i /home/maxim/.ssh/minio-wsl-deploy maxim@100.64.0.3
+            python3 -c 'import json,os; print(json.dumps({"revision":os.environ["DEPLOY_SHA"]}))' | ssh -T -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 -o HostKeyAlgorithms=ssh-ed25519 -o KexAlgorithms=curve25519-sha256 -o IPQoS=none -o StrictHostKeyChecking=yes -i "$MINIO_DEPLOY_KEY_PATH" -- "$MINIO_DEPLOY_TARGET"
